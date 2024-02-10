@@ -1,0 +1,52 @@
+version: '3.8'
+services:
+  node1:
+    image: ${REDIS_IMAGE}
+    entrypoint: /usr/local/bin/supervisord
+    command: "-c /etc/supervisord.conf"
+    volumes:
+      - node1-data:/opt/redis/data
+      - ../source/conf:/opt/redis/conf
+      - ../supervisor/supervisord.conf:/etc/supervisord.conf
+      - ../supervisor/redis.ini:/etc/supervisord.d/redis.ini
+    networks:
+      common:
+        ipv4_address: ${REDIS_NODE_1_IP}
+  node2:
+    image: ${REDIS_IMAGE}
+    entrypoint: /usr/local/bin/supervisord
+    command: "-c /etc/supervisord.conf"
+    volumes:
+      - node2-data:/opt/redis/data
+      - ../source/conf:/opt/redis/conf
+      - ../supervisor/supervisord.conf:/etc/supervisord.conf
+      - ../supervisor/redis.ini:/etc/supervisord.d/redis.ini
+    networks:
+      common:
+        ipv4_address: ${REDIS_NODE_2_IP}
+  node3:
+    image: ${REDIS_IMAGE}
+    entrypoint: /usr/local/bin/supervisord
+    command: "-c /etc/supervisord.conf"
+    volumes:
+      - node3-data:/opt/redis/data
+      - ../source/conf:/opt/redis/conf
+      - ../supervisor/supervisord.conf:/etc/supervisord.conf
+      - ../supervisor/redis.ini:/etc/supervisord.d/redis.ini
+    networks:
+      common:
+        ipv4_address: ${REDIS_NODE_3_IP}
+volumes:
+  node1-data:
+    driver: local
+  node2-data:
+    driver: local
+  node3-data:
+    driver: local
+networks:
+  common:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: ${REDIS_NODE_IP_RANGES}

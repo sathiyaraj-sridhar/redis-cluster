@@ -1,0 +1,41 @@
+# syntax=docker/dockerfile:1
+
+# Set environment which is used to identify base image.
+ARG ENV=dev
+
+# Base image.
+FROM redis-base:${ENV}
+
+WORKDIR /tmp
+
+# Extract Redis source.
+COPY binary/7.2.4.tar.gz .
+RUN tar xzf 7.2.4.tar.gz
+
+# Compile and install Redis.
+WORKDIR redis-7.2.4
+RUN set -x \
+  && make distclean \
+  && make \
+  && make install
+
+# Create a non-privileged user that the Redis will run under.
+RUN useradd -M -s /bin/bash redis
+
+# Create Redis directories.
+WORKDIR /tmp
+RUN set -x \
+  && rm 7.2.4.tar.gz \
+  && rm -rf redis-7.2.4* \
+  && mkdir /opt/redis \
+  && mkdir /opt/redis/data \
+  && mkdir /opt/redis/data/master \
+  && mkdir /opt/redis/data/replica \
+  && mkdir /opt/redis/log \
+  && mkdir /opt/redis/conf \
+  && mkdir /opt/redis/system \
+  && chown -R redis:redis /opt/redis \
+  && history -c
+
+# Set default work directory.
+WORKDIR /opt/redis

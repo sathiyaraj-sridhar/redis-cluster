@@ -1,0 +1,22 @@
+# syntax=docker/dockerfile:1
+
+# Base image.
+FROM amazonlinux:2023
+
+# Install the essential system packages.
+RUN yum install -y wget tar gzip python3-pip shadow-utils openssl
+
+# Install the system packages required for debugging.
+RUN yum install -y less procps net-tools iputils bind-utils vim-minimal
+
+# Install the required system packages for compiling and installing packages from source.
+RUN yum install -y gcc make which pkg-config
+
+# Install the required system packages for SSH connections.
+RUN yum install -y openssh-server openssh-clients
+
+# Install Supervisor.
+RUN set -x \
+  && python3 -m pip install supervisor \
+  && mkdir -p /etc/supervisord.d \
+  && history -c

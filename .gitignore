@@ -1,0 +1,11 @@
+# Ignores files following a specific pattern.
+docker/context
+**/.DS_Store
+**/__pycache__
+**/node_modules
+**/.obsidian
+**/*.tar.gz
+**/*.tgz
+**/*.log
+**/*.env
+**/*.pem

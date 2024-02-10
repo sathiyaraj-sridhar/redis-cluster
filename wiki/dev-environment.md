@@ -32,7 +32,7 @@ For best practices,
 - We download and install Redis source in the Redis image.
 
 
-## Build the base and PXC Docker image
+## Build the base and Redis Docker image
 
 Here, we derive the base image from the **Amazon Linux 2023** Docker image. Then, we create the Redis image based on the previously derived base image.
 
@@ -61,7 +61,7 @@ docker image build -t redis:v7.2.4 -f docker/dockerfile.redis.7.2.4 docker/conte
 ```
 
 
-## Configure PXC
+## Configure Redis
 
 When running the cluster setup, it is crucial to maintain quorum for cluster stability. So, we are going to provision three nodes, each being a Docker container. We have already stored the configuration for each node in the `source/conf` directory.  You can get the configuration template from their official documentation [^3].
 

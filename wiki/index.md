@@ -46,4 +46,4 @@ git clone https://github.com/sathiyaraj-sridhar/redis-cluster.git /opt/oss/redis
 ## Guides
 
 **Development environment (DEV):**
-1. [Running six-node Redis cluster in a Docker Container](wiki/dev-environment.md)
+1. [Running six-node Redis cluster in a Docker Container](dev-environment.md)

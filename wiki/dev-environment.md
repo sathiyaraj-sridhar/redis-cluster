@@ -2,24 +2,23 @@
 
 ## Prerequisites
 
-- Ensure you installed Docker on your machine. If not, please follow their official documentation.[^1]
+- Ensure you installed Docker on your machine. If not, please follow Docker's official documentation.[^1]
 - Ensure you cloned our repository.
 
 ## Overview
 
 In this setup, we are going to:
-1. Write Dockerfile for building custom Docker image for Redis.
-2. Build the Docker image.
-3. Configure Redis
-4. Run Redis cluster on three container.
+1. Write a Dockerfile for building a custom container image for Redis.
+2. Build the base and Redis container images.
+3. Configure Redis cluster.
+4. Run Redis cluster on three containers.
 
 > [!IMPORTANT] 
-> We strongly advise relying on the official documentation and support services [^2]. In this context, we offer a brief overview of the cluster setup with fundamental configurations.
-
+> I strongly recommend relying on the Redis's official documentation and support services [^2]. In this context, I offer a brief overview of the cluster setup with fundamental configurations.
 
 ## Write a Dockerfile
 
-We have written two Dockerfiles, one for the base image and another for the Redis image, which already exist in the `docker` directory.
+I have written two Dockerfiles, one for the base container image and another for the Redis container image, which already exist in the `docker` directory.
 
 ```bash
 ├── docker
@@ -27,14 +26,19 @@ We have written two Dockerfiles, one for the base image and another for the Redi
 │ └── dockerfile.redis.7.2.4
 ```
 
-For best practices, 
-- we install all the necessary softwares, included testing and debugging tools in the base image. This approach applicable only for development (DEV) environment. 
-- We download and install Redis source in the Redis image.
+For best practices,
+- Install all the necessary software, including testing and debugging tools, in the base container image. This approach is applicable only for development (DEV) environments.
+- Then Download and install Redis in the Redis container image.
 
+## Build the base and Redis container image
 
-## Build the base and Redis Docker image
+Here, I derive the base container image from the **Amazon Linux 2023** container image. Then, I create the Redis container image from the previously derived base container image.
 
-Here, we derive the base image from the **Amazon Linux 2023** Docker image. Then, we create the Redis image based on the previously derived base image.
+```mermaid
+graph TD;
+    A[Amazon Linux 2023 container image] --> B[base container image];
+    B --> C[Redis container image];
+```
 
 **Step 1:** Switch to the `redis-cluster` directory.
 
@@ -48,22 +52,21 @@ cd /opt/oss/redis-cluster
 wget https://github.com/redis/redis/archive/7.2.4.tar.gz -P docker/context/binary
 ```
 
-**Step 3:** Build the base image.
+**Step 3:** Build the base container image.
 
 ```bash
 docker image build -t redis-base:dev -f docker/dockerfile.base.dev docker/context
 ```
 
-**Step 4:** Build the Redis image.  Suppose if you built separate base image for production and named `redis-base:prd`, you can use `--build-arg="ENV=prd"` flag to change the `ENV` arguments value in the `dockerfile.redis.7.2.4`.
+**Step 4:** Build the Redis container image.  Suppose if you built separate base image for production and named `redis-base:prd`, you can use `--build-arg="ENV=prd"` flag to change the `ENV` argument value in the `dockerfile.redis.7.2.4`.
 
 ```bash
 docker image build -t redis:v7.2.4 -f docker/dockerfile.redis.7.2.4 docker/context
 ```
 
+## Configure Redis cluster
 
-## Configure Redis
-
-When running the cluster setup, it is crucial to maintain quorum for cluster stability. So, we are going to provision three nodes, each being a Docker container. We have already stored the configuration for each node in the `source/conf` directory.  You can get the configuration template from their official documentation [^3].
+When running the cluster setup, it is crucial to maintain quorum for cluster stability. So, we are going to provision three nodes, each being a Docker container. We have already stored the configuration for each node in the `source/conf` directory.  You can get the configuration template from Redis' official documentation [^3].
 
 ```bash
 ├── source
@@ -74,9 +77,9 @@ When running the cluster setup, it is crucial to maintain quorum for cluster sta
 
 ## Run Redis cluster
 
-It is good practice to store configurable variables in the `.env` file and use this file when bringing up the container using Docker Compose.
+It is considered good practice to store configuration settings in environment variables and inject these variable values from the shell into **Docker Compose** configuration at runtime.
 
-**Step 1:** Add an environment variable file.
+**Step 1:** Store configurations as environment variables in a file.
 
 - Open a new file. 
 
@@ -94,42 +97,35 @@ REDIS_NODE_2_IP=10.1.1.12
 REDIS_NODE_3_IP=10.1.1.13
 ```
 
-**Step 2:** Up the container for Redis cluster.
+**Step 2:** Create and start the containers for the Redis cluster.
 
 ```bash
 docker compose -f docker/compose.yml --env-file docker/default.env -p redis-cluster up -d
 ```
 
-**Step 3:** Create Redis cluster. **Execute below command only once.**
+**Step 3:** Set up the Redis cluster by executing the following command. Only run this command once.
+
+By default Redis Cluster requires at least 3 master nodes and 1 replicas per node.  I am going to run both the master and replica services on all three nodes. The master communicates on port 3000, while the replica communicates on port 3001.
 
 ```bash
 export NODE=node1
 docker container exec -it redis-cluster-${NODE}-1 /usr/local/bin/redis-cli --cluster create 10.1.2.11:3000 10.1.2.21:3000 10.1.2.22:3000 10.1.2.11:3001 10.1.2.21:3001 10.1.2.22:3001 --cluster-replicas 1
 ```
 
-By default redis required 6 nodes.  Below is the sample output from Redis service.
-
-```bash
-*** ERROR: Invalid configuration for cluster creation.
-*** Redis Cluster requires at least 3 master nodes.
-*** This is not possible with 2 nodes and 1 replicas per node.
-*** At least 6 nodes are required.
-```
-
-Run below command to list cluster nodes.
+Verify the formation of the cluster by using the command below; this will list the cluster nodes.
 
 ```bash
 docker container exec -it redis-cluster-${NODE}-1 /usr/local/bin/redis-cli -p 3000 cluster nodes
 ```
 
 
-**Step 4:** Down the Redis cluster.
+**Step 4:** Stop and destroy the containers for the Redis cluster.
 
 ```bash
 docker compose -f docker/compose.yml --env-file docker/default.env -p redis-cluster down
 ```
 
-## Other useful commands
+## Additional helpful commands
 
 ```bash
 export NODE=node1

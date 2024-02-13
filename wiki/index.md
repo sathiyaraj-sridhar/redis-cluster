@@ -43,7 +43,22 @@ sudo chown -R $USER /opt/oss
 git clone https://github.com/sathiyaraj-sridhar/redis-cluster.git /opt/oss/redis-cluster
 ```
 
-## Guides
+## Roadmaps
 
 **Development environment (DEV):**
-1. [Running six-node Redis cluster in a Docker Container](dev-environment.md)
+- [-] [Deploying six-node Redis cluster in a Docker Container.](dev-environment.md)
+- [ ] Testing Ansible playbooks in a Docker container.
+- [ ] Testing Chef cookbooks in a Docker container.
+
+**Staging and QA environment (STG & QA):**
+- [ ] Provisioning infrastructure for a Kubernetes setup using Terraform.
+- [ ] Deploying a six-node Redis cluster in Kubernetes.
+- [ ] Let's understand how to scale Redis cluster in Kubernetes.
+- [ ] Let's understand how to backup Redis cluster data in Kubernetes.
+
+**Production environment (PRD):**
+- [ ] Provisioning infrastructure on the AWS cloud using Terraform.
+- [ ] Deploying a six-node Redis cluster in the AWS cloud using Ansible.
+- [ ] Deploying a six-node Redis cluster in the AWS cloud using Chef.
+- [ ] Let's understand how to scale Redis cluster in the AWS cloud.
+- [ ] Let's understand how to backup Redis cluster data in the AWS cloud.

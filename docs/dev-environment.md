@@ -132,7 +132,7 @@ export NODE=node1
 docker container exec -it redis-cluster-${NODE}-1 /bin/bash
 docker container exec -it redis-cluster-${NODE}-1 /usr/bin/netstat -ntlp
 docker container exec -it redis-cluster-${NODE}-1 /usr/bin/ls /opt/redis/data
-docker container exec -it redis-cluster-${NODE}-1 /usr/bin/tail -n 200 /opt/redis/log/redis.log
+docker container exec -it redis-cluster-${NODE}-1 /usr/bin/tail -n 200 /opt/redis/log/master.log
 ```
 
 - Cluster creation.

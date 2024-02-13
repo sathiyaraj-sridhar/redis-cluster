@@ -7,11 +7,13 @@ The intended audience for this document includes:
 Let's take a brief look at these learning materials.
 
 ```
-├── README.md
 ├── docker
 │ ├── compose.yml
 │ ├── dockerfile.base.dev
 │ └── dockerfile.redis.7.2.4
+│── docs
+│ └── dev-environment.md
+│ └── README.md
 ├── source
 │ └── conf
 │     ├── master.conf
@@ -19,14 +21,11 @@ Let's take a brief look at these learning materials.
 ├── supervisor
 │ ├── redis.ini
 │ └── supervisord.conf
-└── wiki
-    └── dev-environment.md
-    └── index.md
 ```
 - **source:** It includes everything needed for **Redis**, like certificates, configurations, scripts, and more.
 - **supervisor:** It includes configuration file for `supervisord` and **Redis** programs.
 - **docker:** It includes all the Docker-related materials like Dockerfile, Compose, and the Context directory.
-- **wiki:** It includes user guides for utilizing these materials.
+- **docs:** It includes user guides for utilizing these materials.
 
 Let's start.
 

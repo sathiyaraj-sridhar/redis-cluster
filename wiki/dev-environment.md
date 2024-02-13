@@ -109,7 +109,7 @@ By default Redis Cluster requires at least 3 master nodes and 1 replicas per nod
 
 ```bash
 export NODE=node1
-docker container exec -it redis-cluster-${NODE}-1 /usr/local/bin/redis-cli --cluster create 10.1.2.11:3000 10.1.2.21:3000 10.1.2.22:3000 10.1.2.11:3001 10.1.2.21:3001 10.1.2.22:3001 --cluster-replicas 1
+docker container exec -it redis-cluster-${NODE}-1 /usr/local/bin/redis-cli --cluster create 10.1.1.11:3000 10.1.1.12:3000 10.1.1.13:3000 10.1.1.11:3001 10.1.1.12:3001 10.1.1.13:3001 --cluster-replicas 1
 ```
 
 Verify the formation of the cluster by using the command below; this will list the cluster nodes.
@@ -131,6 +131,7 @@ docker compose -f docker/compose.yml --env-file docker/default.env -p redis-clus
 export NODE=node1
 docker container exec -it redis-cluster-${NODE}-1 /bin/bash
 docker container exec -it redis-cluster-${NODE}-1 /usr/bin/netstat -ntlp
+docker container exec -it redis-cluster-${NODE}-1 /usr/bin/ls /opt/redis/data
 docker container exec -it redis-cluster-${NODE}-1 /usr/bin/tail -n 200 /opt/redis/log/redis.log
 ```
 
@@ -141,51 +142,50 @@ docker container exec -it redis-cluster-${NODE}-1 /usr/local/bin/redis-cli --clu
 ```
 
 ```
-# Sample output.
 >>> Performing hash slots allocation on 6 nodes...
 Master[0] -> Slots 0 - 5460
 Master[1] -> Slots 5461 - 10922
 Master[2] -> Slots 10923 - 16383
-Adding replica 10.1.2.21:3001 to 10.1.2.11:3000
-Adding replica 10.1.2.22:3001 to 10.1.2.21:3000
-Adding replica 10.1.2.11:3001 to 10.1.2.22:3000
-M: ac890bf2e2f68e6d9fb78ecb343541cdcfea52e3 10.1.2.11:3000
+Adding replica 10.1.1.12:3001 to 10.1.1.11:3000
+Adding replica 10.1.1.13:3001 to 10.1.1.12:3000
+Adding replica 10.1.1.11:3001 to 10.1.1.13:3000
+M: 040651ea90c6da0f24aa14fdad0f7529af19d96a 10.1.1.11:3000
    slots:[0-5460] (5461 slots) master
-M: de80094ea9dea4c8e16f3a25de42e87214ba1eb3 10.1.2.21:3000
+M: ceb20c026aaf8ebdcd4ee4ef6e20201e944c032a 10.1.1.12:3000
    slots:[5461-10922] (5462 slots) master
-M: 49c4be3036b553122b3e1bf840158cc3160c030b 10.1.2.22:3000
+M: 77cb7d2f98bf2563fde96f5c12acfc7844492bc4 10.1.1.13:3000
    slots:[10923-16383] (5461 slots) master
-S: 141a46c39350309d2bd797a604280e417ba736cf 10.1.2.11:3001
-   replicates 49c4be3036b553122b3e1bf840158cc3160c030b
-S: dcacee0465055edebc29aa21efbff98a9b6b3265 10.1.2.21:3001
-   replicates ac890bf2e2f68e6d9fb78ecb343541cdcfea52e3
-S: 92d03cf00df94b66795e2d7677e03fae807af167 10.1.2.22:3001
-   replicates de80094ea9dea4c8e16f3a25de42e87214ba1eb3
+S: 94d9d5c5b03e189042616020dd729240eaae673f 10.1.1.11:3001
+   replicates 77cb7d2f98bf2563fde96f5c12acfc7844492bc4
+S: f50b97b5a757b09364b5fbba9286b28b56c80721 10.1.1.12:3001
+   replicates 040651ea90c6da0f24aa14fdad0f7529af19d96a
+S: 847b27d0eada904670815717783a1b1441eb391f 10.1.1.13:3001
+   replicates ceb20c026aaf8ebdcd4ee4ef6e20201e944c032a
 Can I set the above configuration? (type 'yes' to accept): yes
 >>> Nodes configuration updated
 >>> Assign a different config epoch to each node
 >>> Sending CLUSTER MEET messages to join the cluster
 Waiting for the cluster to join
-
->>> Performing Cluster Check (using node 10.1.2.11:3000)
-M: ac890bf2e2f68e6d9fb78ecb343541cdcfea52e3 10.1.2.11:3000
+.
+>>> Performing Cluster Check (using node 10.1.1.11:3000)
+M: 040651ea90c6da0f24aa14fdad0f7529af19d96a 10.1.1.11:3000
    slots:[0-5460] (5461 slots) master
    1 additional replica(s)
-M: de80094ea9dea4c8e16f3a25de42e87214ba1eb3 10.1.2.21:3000
-   slots:[5461-10922] (5462 slots) master
-   1 additional replica(s)
-S: 92d03cf00df94b66795e2d7677e03fae807af167 10.1.2.22:3001
-   slots: (0 slots) slave
-   replicates de80094ea9dea4c8e16f3a25de42e87214ba1eb3
-M: 49c4be3036b553122b3e1bf840158cc3160c030b 10.1.2.22:3000
+M: 77cb7d2f98bf2563fde96f5c12acfc7844492bc4 10.1.1.13:3000
    slots:[10923-16383] (5461 slots) master
    1 additional replica(s)
-S: dcacee0465055edebc29aa21efbff98a9b6b3265 10.1.2.21:3001
+S: f50b97b5a757b09364b5fbba9286b28b56c80721 10.1.1.12:3001
    slots: (0 slots) slave
-   replicates ac890bf2e2f68e6d9fb78ecb343541cdcfea52e3
-S: 141a46c39350309d2bd797a604280e417ba736cf 10.1.2.11:3001
+   replicates 040651ea90c6da0f24aa14fdad0f7529af19d96a
+S: 94d9d5c5b03e189042616020dd729240eaae673f 10.1.1.11:3001
    slots: (0 slots) slave
-   replicates 49c4be3036b553122b3e1bf840158cc3160c030b
+   replicates 77cb7d2f98bf2563fde96f5c12acfc7844492bc4
+S: 847b27d0eada904670815717783a1b1441eb391f 10.1.1.13:3001
+   slots: (0 slots) slave
+   replicates ceb20c026aaf8ebdcd4ee4ef6e20201e944c032a
+M: ceb20c026aaf8ebdcd4ee4ef6e20201e944c032a 10.1.1.12:3000
+   slots:[5461-10922] (5462 slots) master
+   1 additional replica(s)
 [OK] All nodes agree about slots configuration.
 >>> Check for open slots...
 >>> Check slots coverage...
@@ -200,18 +200,30 @@ docker container exec -it redis-cluster-${NODE}-1 /usr/local/bin/redis-cli -p 30
 
 ```
 # Sample output.
-de80094ea9dea4c8e16f3a25de42e87214ba1eb3 10.1.2.21:3000@13000 master - 0 1706206810479 2 connected 5461-10922
-ac890bf2e2f68e6d9fb78ecb343541cdcfea52e3 10.1.2.11:3000@13000 myself,master - 0 1706206808000 1 connected 0-5460
-92d03cf00df94b66795e2d7677e03fae807af167 10.1.2.22:3001@13001 slave de80094ea9dea4c8e16f3a25de42e87214ba1eb3 0 1706206807458 2 connected
-49c4be3036b553122b3e1bf840158cc3160c030b 10.1.2.22:3000@13000 master - 0 1706206807000 3 connected 10923-16383
-dcacee0465055edebc29aa21efbff98a9b6b3265 10.1.2.21:3001@13001 slave ac890bf2e2f68e6d9fb78ecb343541cdcfea52e3 0 1706206809472 1 connected
-141a46c39350309d2bd797a604280e417ba736cf 10.1.2.11:3001@13001 slave 49c4be3036b553122b3e1bf840158cc3160c030b 0 1706206809000 3 connected
+77cb7d2f98bf2563fde96f5c12acfc7844492bc4 10.1.1.13:3000@13000 master - 0 1707810907778 3 connected 10923-16383
+f50b97b5a757b09364b5fbba9286b28b56c80721 10.1.1.12:3001@13001 slave 040651ea90c6da0f24aa14fdad0f7529af19d96a 0 1707810908783 1 connected
+94d9d5c5b03e189042616020dd729240eaae673f 10.1.1.11:3001@13001 slave 77cb7d2f98bf2563fde96f5c12acfc7844492bc4 0 1707810907000 3 connected
+040651ea90c6da0f24aa14fdad0f7529af19d96a 10.1.1.11:3000@13000 myself,master - 0 1707810907000 1 connected 0-5460
+847b27d0eada904670815717783a1b1441eb391f 10.1.1.13:3001@13001 slave ceb20c026aaf8ebdcd4ee4ef6e20201e944c032a 0 1707810909788 2 connected
+ceb20c026aaf8ebdcd4ee4ef6e20201e944c032a 10.1.1.12:3000@13000 master - 0 1707810905000 2 connected 5461-10922
 ```
 
 - Get shell access of the Redis server.
 
 ```bash
 docker container exec -it redis-cluster-${NODE}-1 /usr/local/bin/redis-cli -c -h 10.1.1.11 -p 3000
+```
+
+```
+# Simple verification.
+10.1.1.11:3000> keys *
+(empty array)
+10.1.1.11:3000> set user:1 sathiyaraj
+-> Redirected to slot [10778] located at 10.1.1.12:3000
+OK
+10.1.1.12:3000> get user:1
+"sathiyaraj"
+10.1.1.12:3000> exit
 ```
 
 ## References

@@ -46,7 +46,7 @@ git clone https://github.com/sathiyaraj-sridhar/redis-cluster.git /opt/oss/redis
 ## Roadmaps
 
 **Development environment (DEV):**
-- [-] [Deploying six-node Redis cluster in a Docker Container.](wiki/dev-environment.md)
+- [x] [Deploying six-node Redis cluster in a Docker Container.](wiki/dev-environment.md)
 - [ ] Testing Ansible playbooks in a Docker container.
 - [ ] Testing Chef cookbooks in a Docker container.
 

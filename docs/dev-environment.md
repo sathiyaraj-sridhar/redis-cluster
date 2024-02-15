@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - Ensure you installed Docker on your machine. If not, please follow Docker's official documentation.[^1]
-- Ensure you cloned our repository.
+- Ensure you cloned the repository.
 
 ## Overview
 
